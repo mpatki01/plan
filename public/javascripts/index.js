@@ -1,45 +1,47 @@
-var Task = function(name, updated) {
-    this.name = ko.observable(name);
-    this.updated = ko.observable(updated);
-    this.updatable = ko.observable(false);
-};
+(function(ko) {
 
-var TasksViewModel = function() {
-    this.tasks = ko.observableArray([]);
-    this.nameToAdd = ko.observable("");
-};
+    var Task = function() {
+        var self = this;
+        self.name = ko.observable();
+        self.updated = ko.observable();
+        self.updatable = ko.observable(false);
+        self.nameNotNull = ko.computed(function() {
+            return self.name() !== undefined && self.name().length > 0;
+        }, self)
+    };
 
-TasksViewModel.prototype.add = function () {
-    if (this.nameToAdd()) {
-        var task = new Task(this.nameToAdd(), new Date());
-        this.tasks.push(task);
-        this.nameToAdd("");
+    Task.prototype.edit = function() {
+        this.updatable(true);
     }
-};
 
-TasksViewModel.prototype.edit = function(task) {
-    var index = this.tasks.indexOf(task);
-    var tasks = this.tasks();
-    var task = tasks[index];
-    task.updatable(true);
-};
+    Task.prototype.save = function() {
+        this.updated(new Date());
+        this.updatable(false);
+    }
 
-TasksViewModel.prototype.save = function(task) {
-    var index = this.tasks.indexOf(task);
-    var tasks = this.tasks();
-    var task = tasks[index];
-    task.updatable(false);
-}
+    Task.prototype.add = function() {
+        vm.task().updated(new Date());
+        vm.tasks.push(vm.task());
+        vm.task(new Task());
+    }
 
-/**
- * Removes a task from the list.
- *
- * @param task The task to remove.
- * @remark The context has to be bound explicitly see
- *         (http://www.knockmeout.net/2013/06/knockout-debugging-strategies-plugin.html)
- */
-TasksViewModel.prototype.removeTask = function(task) {
-    this.tasks.remove(task);
-};
+    var TasksViewModel = function() {
+        this.tasks = ko.observableArray();
+        this.task = ko.observable(new Task());
+    };
 
-ko.applyBindings(new TasksViewModel());
+    TasksViewModel.prototype.add = function () {
+        this.task().updated(new Date());
+        this.tasks.push(this.task());
+        this.task(new Task());
+    };
+
+    TasksViewModel.prototype.delete = function(task) {
+        this.tasks.remove(task);
+    };
+
+    var vm = new TasksViewModel();
+    ko.applyBindings(vm);
+
+})(ko)
+

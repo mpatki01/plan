@@ -5,15 +5,16 @@ block content
   p Welcome to #{title}
   ul(data-bind="foreach: tasks")
     li
-        span(data-bind="text: name, click: $root.edit.bind($root), visible: !updatable()")
+        span(data-bind="text: name, click: edit, visible: !updatable()")
         input(data-bind="value: name, visible: updatable()")
         &nbsp;&nbsp;
-        a(href="#", data-bind="visible: updatable(), click: $root.save.bind($root)") save
+        a(href="#", data-bind="visible: updatable(), click: save") save
         &nbsp;&nbsp;
-        a(href="#", data-bind="click: $root.removeTask.bind($root)") delete
+        a(href="#", data-bind="click: $root.delete.bind($root)") delete
   hr
-  input(id="name", type="text", data-bind="value: nameToAdd, , valueUpdate: 'afterkeydown'")
-  button(data-bind="click: add($data), enable: nameToAdd().length > 0") Submit
+  form(data-bind="with: task")
+    input(id="name", type="text", data-bind="value: name, valueUpdate: 'afterkeydown'")
+    button(data-bind="click: add, enable: nameNotNull") Submit
 
 block scripts
     script(src="/javascripts/jquery-1.10.2.min.js", type="text/javascript")
