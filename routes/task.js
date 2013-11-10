@@ -20,19 +20,35 @@ exports.getById = function(req, res) {
     res.send({message: "GET handled"});
 }
 
-exports.create = function(req, res) {
-    var message = "Task Item Created.";
+exports.save = function(req, res) {
+    var message = "Task Item Saved.";
+    /*
+    var task = req.body;
+    if (req.body._id) {
+        delete task._id;
+    }
+    else {
+        task._id = mongoose.Types.ObjectId();
+        req.body._id = task._id;
+    }
+    */
     var task = new Task(req.body);
+    var data = task.toObject();
+    delete data._id;
+    Task.update({_id: task._id}, data, {upsert: true}, function(error) {
+        if (error) {
+            message = "Failed to save Todo Item.";
+        }
+        res.send({message: message});
+    });
+    /*
     task.save(function(error) {
         if (error) {
-            message = "Failed to create Todo Item.";
+            message = "Failed to save Todo Item.";
         }
         res.send({message: message});
     })
-}
-
-exports.update = function(req, res) {
-    res.send({message: "PUT handled"});
+    */
 }
 
 exports.delete = function(req, res) {

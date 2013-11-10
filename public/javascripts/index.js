@@ -3,7 +3,7 @@
     var Task = function(options) {
         var self = this;
         options = options || {};
-        self.id = ko.observable(options.id);
+        self._id = ko.observable(options._id);
         self.name = ko.observable(options.name);
         self.updated = ko.observable(options.updated);
         self.updatable = ko.observable(false);
@@ -18,6 +18,17 @@
 
     Task.prototype.save = function() {
         this.updated(new Date());
+        $.ajax({
+            type: 'POST',
+            data: ko.toJSON(this),
+            contentType: 'application/json',
+            url: '/task/save',
+            success: function(data) {
+                console.log('success');
+                console.log(JSON.stringify(data));
+                $("#msg").text(data.message);
+            }
+        })
         this.updatable(false);
     }
 
@@ -31,7 +42,7 @@
                 type: 'POST',
                 data: ko.toJSON(original),
                 contentType: 'application/json',
-                url: '/task/add',
+                url: '/task/save',
                 success: function(data) {
                     console.log('success');
                     console.log(JSON.stringify(data));
@@ -50,7 +61,7 @@
     TasksViewModel.prototype.init = function() {
         for (var i = 0; i < data.length; i++) {
             var task = new Task({
-                id : data[i]._id,
+                _id : data[i]._id,
                 name : data[i].name,
                 updated : data[i].updated
             });
