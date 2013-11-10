@@ -4,7 +4,10 @@ block content
   h1= title
   p Welcome to #{title}
   ul(data-bind="foreach: tasks")
-    li(data-bind="text: name")
+    li
+        span(data-bind="text: name")
+        |
+        a(href="#", data-bind="click: $root.removeTask.bind($root)") delete
   hr
   input(id="name", type="text", data-bind="value: nameToAdd, , valueUpdate: 'afterkeydown'")
   button(data-bind="click: add($data), enable: nameToAdd().length > 0") Submit
