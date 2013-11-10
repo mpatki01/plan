@@ -5,8 +5,11 @@ block content
   p Welcome to #{title}
   ul(data-bind="foreach: tasks")
     li
-        span(data-bind="text: name")
-        |
+        span(data-bind="text: name, click: $root.edit.bind($root), visible: !updatable()")
+        input(data-bind="value: name, visible: updatable()")
+        &nbsp;&nbsp;
+        a(href="#", data-bind="visible: updatable(), click: $root.save.bind($root)") save
+        &nbsp;&nbsp;
         a(href="#", data-bind="click: $root.removeTask.bind($root)") delete
   hr
   input(id="name", type="text", data-bind="value: nameToAdd, , valueUpdate: 'afterkeydown'")

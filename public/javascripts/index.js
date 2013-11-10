@@ -1,28 +1,35 @@
 var Task = function(name, updated) {
-    var self = this;
-    self.name = ko.observable(name);
-    self.updated = ko.observable(updated);
+    this.name = ko.observable(name);
+    this.updated = ko.observable(updated);
+    this.updatable = ko.observable(false);
 };
 
 var TasksViewModel = function() {
-    var self = this;
-    self.tasks = ko.observableArray([]);
-    self.nameToAdd = ko.observable("");
-    /*
-    self.removeTask = function(task) {
-        self.tasks.remove(task);
-    }
-    */
+    this.tasks = ko.observableArray([]);
+    this.nameToAdd = ko.observable("");
 };
 
 TasksViewModel.prototype.add = function () {
-    var self = this;
-    if (self.nameToAdd()) {
-        var task = new Task(self.nameToAdd(), new Date());
-        self.tasks.push(task);
-        self.nameToAdd("");
+    if (this.nameToAdd()) {
+        var task = new Task(this.nameToAdd(), new Date());
+        this.tasks.push(task);
+        this.nameToAdd("");
     }
 };
+
+TasksViewModel.prototype.edit = function(task) {
+    var index = this.tasks.indexOf(task);
+    var tasks = this.tasks();
+    var task = tasks[index];
+    task.updatable(true);
+};
+
+TasksViewModel.prototype.save = function(task) {
+    var index = this.tasks.indexOf(task);
+    var tasks = this.tasks();
+    var task = tasks[index];
+    task.updatable(false);
+}
 
 /**
  * Removes a task from the list.
@@ -32,8 +39,7 @@ TasksViewModel.prototype.add = function () {
  *         (http://www.knockmeout.net/2013/06/knockout-debugging-strategies-plugin.html)
  */
 TasksViewModel.prototype.removeTask = function(task) {
-    var self = this;
-    self.tasks.remove(task);
+    this.tasks.remove(task);
 };
 
 ko.applyBindings(new TasksViewModel());
