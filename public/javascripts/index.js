@@ -1,22 +1,22 @@
-var AppViewModel = function() {
+var Task = function(name, updated) {
     var self = this;
-    self.name = ko.observable("");
-    self.salutation = ko.observable("");
-    self.greeting = ko.computed(self.greeting, self);
+    self.name = ko.observable(name);
+    self.updated = ko.observable(updated);
 }
 
-AppViewModel.prototype.greeting = function() {
-    var greeting = "";
-    if (this.name()) {
-        greeting = "Hello, " + this.name();
-    }
-    return greeting;
-};
+var TasksViewModel = function() {
+    var self = this;
+    self.tasks = ko.observableArray([]);
+    self.nameToAdd = ko.observable("");
+}
 
-AppViewModel.prototype.sayHello = function() {
-    if (this.name()) {
-        this.salutation("Hello, " + this.name());
+TasksViewModel.prototype.add = function() {
+    var self = this;
+    if (self.nameToAdd()) {
+        var task = new Task(self.nameToAdd(), new Date());
+        self.tasks.push(task);
+        self.nameToAdd("");
     }
-};
+}
 
-ko.applyBindings(new AppViewModel());
+ko.applyBindings(new TasksViewModel());
