@@ -5,6 +5,7 @@
 var mongoose = require("./db");
 var express = require('express');
 var routes = require('./routes');
+var task = require('./routes/task');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
@@ -30,8 +31,8 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/fetch', routes.fetch);
-app.post('/create', routes.create);
+app.get('/tasks', task.getAll);
+app.post('/task/add', task.create);
 app.get('/users', user.list);
 
 http.createServer(app).listen(app.get('port'), function(){

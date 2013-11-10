@@ -1,9 +1,11 @@
 (function(ko) {
 
-    var Task = function() {
+    var Task = function(options) {
         var self = this;
-        self.name = ko.observable();
-        self.updated = ko.observable();
+        options = options || {};
+        self.id = ko.observable(options.id);
+        self.name = ko.observable(options.name);
+        self.updated = ko.observable(options.updated);
         self.updatable = ko.observable(false);
         self.nameNotNull = ko.computed(function() {
             return self.name() !== undefined && self.name().length > 0;
@@ -20,8 +22,7 @@
     }
 
     Task.prototype.add = function() {
-        $.get("/fetch", {}, function(data) {
-            $("#msg").text(data.message);
+        $.get("/tasks", {}, function(data) {
             vm.task().updated(new Date());
             var original = vm.task();
             vm.tasks.push(vm.task());
@@ -30,7 +31,7 @@
                 type: 'POST',
                 data: ko.toJSON(original),
                 contentType: 'application/json',
-                url: '/create',
+                url: '/task/add',
                 success: function(data) {
                     console.log('success');
                     console.log(JSON.stringify(data));
@@ -43,14 +44,29 @@
     var TasksViewModel = function() {
         this.tasks = ko.observableArray();
         this.task = ko.observable(new Task());
+        this.init();
     };
+
+    TasksViewModel.prototype.init = function() {
+        for (var i = 0; i < data.length; i++) {
+            var task = new Task({
+                id : data[i]._id,
+                name : data[i].name,
+                updated : data[i].updated
+            });
+            this.tasks.push(task);
+        }
+    }
 
     TasksViewModel.prototype.delete = function(task) {
         this.tasks.remove(task);
     };
 
-    var vm = new TasksViewModel();
-    ko.applyBindings(vm);
+    var vm = null;
+    $(document).ready(function() {
+        vm = new TasksViewModel();
+        ko.applyBindings(vm);
+    })
 
 })(ko)
 
