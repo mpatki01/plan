@@ -70,7 +70,16 @@
     }
 
     TasksViewModel.prototype.delete = function(task) {
-        this.tasks.remove(task);
+        $.ajax({
+            type: 'POST',
+            data: JSON.stringify({id: task._id()}),
+            contentType: 'application/json',
+            url: '/task/delete',
+            success: function(info) {
+                $("#msg").text(info.message);
+                vm.tasks.remove(task);
+            }
+        })
     };
 
     var vm = null;
