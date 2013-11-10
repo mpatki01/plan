@@ -1,0 +1,15 @@
+{
+  "name": "triptacular",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "connect": "2.11.0",
+    "express": "3.4.4",
+    "jade": "*",
+    "mongoose": "3.8.0",
+    "stylus": "*"
+  }
+}
