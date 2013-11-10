@@ -20,20 +20,29 @@
     }
 
     Task.prototype.add = function() {
-        vm.task().updated(new Date());
-        vm.tasks.push(vm.task());
-        vm.task(new Task());
+        $.get("/fetch", {}, function(data) {
+            $("#msg").text(data.message);
+            vm.task().updated(new Date());
+            var original = vm.task();
+            vm.tasks.push(vm.task());
+            vm.task(new Task());
+            $.ajax({
+                type: 'POST',
+                data: ko.toJSON(original),
+                contentType: 'application/json',
+                url: '/create',
+                success: function(data) {
+                    console.log('success');
+                    console.log(JSON.stringify(data));
+                    $("#msg").text(data.message);
+                }
+            })
+        });
     }
 
     var TasksViewModel = function() {
         this.tasks = ko.observableArray();
         this.task = ko.observable(new Task());
-    };
-
-    TasksViewModel.prototype.add = function () {
-        this.task().updated(new Date());
-        this.tasks.push(this.task());
-        this.task(new Task());
     };
 
     TasksViewModel.prototype.delete = function(task) {

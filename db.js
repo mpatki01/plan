@@ -1,8 +1,8 @@
 var mongoose = require("mongoose");
 
 var Todo = new mongoose.Schema({
-    content    : String,
-    updated_at : Date
+    name    : String,
+    updated : Date
 });
 
 mongoose.model("Todo", Todo);
