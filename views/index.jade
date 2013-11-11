@@ -10,7 +10,7 @@ block content
         &nbsp;&nbsp;
         a(href="#", data-bind="visible: updatable(), click: save") save
         &nbsp;&nbsp;
-        a(href="#", data-bind="click: $root.delete.bind($root)") delete
+        a(href="#", data-bind="click: remove") delete
   hr
   form(data-bind="with: task")
     input(id="name", type="text", data-bind="value: name, valueUpdate: 'afterkeydown'")

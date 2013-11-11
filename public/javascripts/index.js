@@ -52,6 +52,20 @@
         });
     }
 
+    Task.prototype.remove = function() {
+        var self = this;
+        $.ajax({
+            type: 'POST',
+            data: JSON.stringify({id: self._id()}),
+            contentType: 'application/json',
+            url: '/task/delete',
+            success: function(info) {
+                $("#msg").text(info.message);
+                vm.tasks.remove(self);
+            }
+        })
+    }
+
     var TasksViewModel = function() {
         this.tasks = ko.observableArray();
         this.task = ko.observable(new Task());
@@ -68,19 +82,6 @@
             this.tasks.push(task);
         }
     }
-
-    TasksViewModel.prototype.delete = function(task) {
-        $.ajax({
-            type: 'POST',
-            data: JSON.stringify({id: task._id()}),
-            contentType: 'application/json',
-            url: '/task/delete',
-            success: function(info) {
-                $("#msg").text(info.message);
-                vm.tasks.remove(task);
-            }
-        })
-    };
 
     var vm = null;
     $(document).ready(function() {
