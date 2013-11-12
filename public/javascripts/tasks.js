@@ -13,7 +13,6 @@ function TaskCtrl($scope, $http, $window) {
 
     $scope.addTask = function() {
         var task = {
-            "_id": null,
             "name": $scope.taskText,
             "updated": Date.now()
         };
