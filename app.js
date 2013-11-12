@@ -34,6 +34,7 @@ app.get('/', routes.index);
 app.get('/tasks', task.getAll);
 app.post('/task/save', task.save);
 app.post('/task/delete', task.delete);
+app.get('/angular/tasks', task.angular);
 app.get('/users', user.list);
 
 http.createServer(app).listen(app.get('port'), function(){

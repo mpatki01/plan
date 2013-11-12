@@ -1,0 +1,20 @@
+extends jumbotron
+block heading-content
+    script(type="text/javascript")
+        window.initial = !{JSON.stringify(initial)};
+    h1 Task List
+    ul(class="list-unstyled")
+        li(ng-repeat="task in tasks")
+            span {{task.name}}
+    h4 (Total = {{total()}})
+block main-content
+    hr
+    form(role="form", class="form-inline")
+        div(class="form-group")
+            label(for="name") Task Name
+            <br />
+            input(id="name", type="text", style="width: 300px", class="form-control", placeholder="Enter a name for this task", ng-model="taskText")
+            &nbsp;
+            button(class="btn", ng-click="addTask()") Submit
+block scripts
+    script(src="/javascripts/tasks.js", type="text/javascript")

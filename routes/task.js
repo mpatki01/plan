@@ -1,6 +1,13 @@
 var mongoose = require( 'mongoose' );
 var Task = mongoose.model( 'Task' );
 
+
+exports.angular = function(req, res){
+    Task.find({}, function (err, tasks) {
+        res.render('tasks', { initial: tasks });
+    });
+};
+
 /**
  * Gets all task items.
  * @param req
