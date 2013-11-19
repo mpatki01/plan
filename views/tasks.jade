@@ -6,6 +6,8 @@ block heading-content
     ul(class="list-unstyled")
         li(ng-repeat="task in tasks")
             span {{task.name}}
+            &nbsp;
+            a(href="#") edit
     h4 (Total = {{total()}})
 block main-content
     hr
