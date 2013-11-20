@@ -10,6 +10,8 @@ var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 
+
+
 var app = express();
 
 // all environments
@@ -30,12 +32,12 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+
 app.get('/', routes.index);
 app.get('/tasks', task.getAll);
-app.post('/task/save', task.save);
+app.post('/task/save', mongoose.taskContext.save);
 app.post('/task/delete', task.delete);
 app.get('/angular/tasks', task.angular);
-app.get('/angular2/tasks', task.angular);
 app.get('/users', user.list);
 
 http.createServer(app).listen(app.get('port'), function(){
