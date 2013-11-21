@@ -1,16 +1,14 @@
-
 /**
  * Module dependencies.
  */
 var mongoose = require("./db");
 var express = require('express');
+var restify = require('./restify');
 var routes = require('./routes');
 var task = require('./routes/task');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
-
-
 
 var app = express();
 
@@ -32,11 +30,11 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-
+restify.serve(app, mongoose.models);
 app.get('/', routes.index);
-app.get('/tasks', task.getAll);
-app.post('/task/save', mongoose.taskContext.save);
-app.post('/task/delete', task.delete);
+//app.get('/tasks', task.getAll);
+//app.post('/task/save', mongoose.taskContext.save);
+//app.post('/task/delete', task.delete);
 app.get('/angular/tasks', task.angular);
 app.get('/users', user.list);
 

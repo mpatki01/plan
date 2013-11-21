@@ -16,7 +16,7 @@ function TaskCtrl($scope, $http, $window) {
             "name": $scope.taskText,
             "updated": Date.now()
         };
-        $http.post('/task/save', task).
+        $http.post('/api/v1/Tasks', task).
               success(function(data){
                 $scope.tasks.push(task);
                 $scope.taskText = "";

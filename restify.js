@@ -1,7 +1,16 @@
+var mongoose = require("mongoose");
+var express = require("express");
 
-var Context = function(model) {
+var Service = function(model, app, options) {
 
-    this.save = function (req, res) {
+    var options = options || {};
+    var api = options.api || "/api/";
+    var version = options.version || "v1/";
+    var pluralized = options.pluralized || model.modelName + "s";
+    var url = api + version + pluralized;
+    var slug = options.slug || "/:id";
+
+    var save = function (req, res) {
         var message = "Task Item Saved.";
 
         // Create a new model using the model's constructor.
@@ -25,10 +34,22 @@ var Context = function(model) {
         });
     };
 
+    app.post(url, save);
+    app.put(url + slug, save);
 };
 
 
-
-exports.init = function(model) {
-    return new Context(model);
+exports.serve = function(app, models, options) {
+    var services = [];
+    if (app && models) {
+        for (var i = 0; i < models.length; i++) {
+            var config = {};
+            var name = models[i].modelName;
+            if (options && options[name]) {
+                config = options[name];
+            }
+            services.push(new Service(models[i], app, config));
+        }
+    }
+    return services;
 };
