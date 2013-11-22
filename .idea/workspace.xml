@@ -26,25 +26,25 @@
       <file leaf-file-name="tasks.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/javascripts/tasks.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="33" selection-start="449" selection-end="449" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="540">
+            <state line="38" column="31" selection-start="1049" selection-end="1049" vertical-scroll-proportion="0.0" vertical-offset="270" max-vertical-offset="900">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tasks.jade" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="tasks.jade" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/views/tasks.jade">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="39" selection-start="461" selection-end="461" vertical-scroll-proportion="-9.0" vertical-offset="0" max-vertical-offset="420">
+            <state line="11" column="67" selection-start="496" selection-end="496" vertical-scroll-proportion="0.31346154" vertical-offset="2" max-vertical-offset="525">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="restify.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="restify.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/restify.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="2" selection-start="1375" selection-end="1375" vertical-scroll-proportion="0.7972028" vertical-offset="0" max-vertical-offset="900">
+            <state line="32" column="0" selection-start="1255" selection-end="1255" vertical-scroll-proportion="0.0" vertical-offset="57" max-vertical-offset="1050">
               <folding />
             </state>
           </provider>
@@ -96,13 +96,13 @@
         <option value="$PROJECT_DIR$/public/javascripts/angular.min.js" />
         <option value="$PROJECT_DIR$/public/javascripts/angular-1.2.0.min.js" />
         <option value="$PROJECT_DIR$/views/jumbotron.jade" />
-        <option value="$PROJECT_DIR$/views/tasks.jade" />
         <option value="$PROJECT_DIR$/public/javascripts/context.js" />
         <option value="$PROJECT_DIR$/context.js" />
         <option value="$PROJECT_DIR$/db.js" />
-        <option value="$PROJECT_DIR$/public/javascripts/tasks.js" />
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/restify.js" />
+        <option value="$PROJECT_DIR$/public/javascripts/tasks.js" />
+        <option value="$PROJECT_DIR$/views/tasks.jade" />
       </list>
     </option>
   </component>
@@ -383,11 +383,11 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32884097" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32884097" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24984147" sideWeight="0.66307276" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.148383" sideWeight="0.58221024" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.148383" sideWeight="0.77088946" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.52156335" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32884097" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41778976" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22911051" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -435,11 +435,26 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/restify.js</url>
-          <line>46</line>
-          <option name="timeStamp" value="31" />
+          <line>13</line>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/restify.js</url>
+          <line>29</line>
+          <option name="timeStamp" value="35" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/restify.js</url>
+          <line>30</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/restify.js</url>
+          <line>32</line>
+          <option name="timeStamp" value="37" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="32" />
+      <option name="time" value="38" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -497,30 +512,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/task.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="0" selection-start="580" selection-end="580" vertical-scroll-proportion="0.2027972" vertical-offset="260" max-vertical-offset="975">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="32" column="34" selection-start="897" selection-end="897" vertical-scroll-proportion="0.0" vertical-offset="20" max-vertical-offset="735">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/javascripts/tasks.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="33" selection-start="449" selection-end="449" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="540">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/views/tasks.jade">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="39" selection-start="461" selection-end="461" vertical-scroll-proportion="-9.0" vertical-offset="0" max-vertical-offset="420">
           <folding />
         </state>
       </provider>
@@ -532,9 +526,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/routes/task.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="37" selection-start="656" selection-end="656" vertical-scroll-proportion="-0.2962963" vertical-offset="570" max-vertical-offset="975">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/restify.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="2" selection-start="1375" selection-end="1375" vertical-scroll-proportion="0.7972028" vertical-offset="0" max-vertical-offset="900">
+        <state line="32" column="0" selection-start="1255" selection-end="1255" vertical-scroll-proportion="0.0" vertical-offset="57" max-vertical-offset="1050">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/javascripts/tasks.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="31" selection-start="1049" selection-end="1049" vertical-scroll-proportion="0.0" vertical-offset="270" max-vertical-offset="900">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/tasks.jade">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="67" selection-start="496" selection-end="496" vertical-scroll-proportion="0.31346154" vertical-offset="2" max-vertical-offset="525">
           <folding />
         </state>
       </provider>

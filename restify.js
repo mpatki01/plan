@@ -30,12 +30,22 @@ var Service = function(model, app, options) {
             if (error) {
                 message = "Failed to save task.";
             }
-            res.send({message: message});
+            data._id = item._id;
+            res.send(data);
         });
+    };
+
+    var remove = function(req, res) {
+        var message = "Task deleted."
+        model.remove({_id: req.params.id}, function(error) {
+            message = "Failed to delete task."
+        })
+        res.send({message: message});
     };
 
     app.post(url, save);
     app.put(url + slug, save);
+    app.delete(url + slug, remove);
 };
 
 

@@ -5,9 +5,16 @@ block heading-content
     h1 Task List
     ul(class="list-unstyled")
         li(ng-repeat="task in tasks")
-            span {{task.name}}
+            span(ng-hide="editing") {{task.name}}
+            input(type="text", ng-model="task.name", ng-show="editing")
             &nbsp;
-            a(href="#") edit
+            a(href="#", ng-click="editing = true", ng-hide="editing") edit
+            a(href="#", ng-click="updateTask(task); editing = false", ng-show="editing") update
+            &nbsp;
+            a(href="#", ng-click="removeTask($index)", ng-show="editing") delete
+            &nbsp;
+            a(href="#", ng-click="editing = false", ng-show="editing") cancel
+
     h4 (Total = {{total()}})
 block main-content
     hr
