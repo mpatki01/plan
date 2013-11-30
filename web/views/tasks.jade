@@ -5,7 +5,7 @@ block heading-content
     h1 Task List
     ul(class="list-unstyled")
         li(ng-repeat="task in tasks")
-            span(ng-hide="editing") {{task.name}}
+            span(ng-hide="editing", ng-bind="task.name")
             input(type="text", ng-model="task.name", ng-show="editing")
             &nbsp;
             a(href="#", ng-click="editing = true", ng-hide="editing") edit

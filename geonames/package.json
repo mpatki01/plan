@@ -1,0 +1,13 @@
+{
+    "name": "triptacular.geonames",
+    "version": "0.0.1",
+    "private": true,
+    "scripts": {
+        "start": "node import.js"
+    },
+    "dependencies": {
+        "mongoose": "3.8.0",
+        "moment": "2.4.0",
+        "carrier": "0.1.13"
+    }
+}
