@@ -15,8 +15,10 @@ var _files = [
 	'alternateNames.zip',
 	'allCountries.zip'
 ];
+var _holder = {};
+var _complete = true;
 
-var download = function(name, complete) {
+var download = function(name, options) {
     var file = fs.createWriteStream(_target + name);
     var req = http.request({
         host: _host, 
@@ -41,8 +43,9 @@ var download = function(name, complete) {
 
       res.on('end', function(){
           file.end();
-          complete();
+          _complete = true;
       });
+
     });
 
     req.end();
@@ -53,7 +56,17 @@ mkdirp(_target, function(err) {
     if (err) {
         console.error(err);
     }
-    for(var i = 0; i < _files.length; i++) {
-        download(_files[i]);
-    }
+    var index = 0;
+    var interval = setInterval(function() {
+        if (_complete) {
+            _complete = false;
+            download(_files[index]);
+            if (index == _files.length - 1) {
+                process.exit(0);
+            }
+            else {
+                index++;
+            }
+        }
+    }, 100);
 });
