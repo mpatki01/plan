@@ -4,9 +4,9 @@ var fs = require('fs');
 var lineReader = require('line-reader');
 var databaseName = 'triptacular';
 var mongoClient = new MongoClient(new Server('localhost', 27017));
-var filename = '/home/mike/geonames_data/sample.txt';
+var filename = '/home/mike/geonames_data/sameple.txt';
 var inStream = fs.createReadStream(filename, {flags:'r'});
-var threshold = 30000;
+var threshold = 20000;
 var records = [];
 
 mongoClient.open(function(err, mongoClient) {
