@@ -19,7 +19,7 @@ mongoClient.open(function(err, mongoClient) {
         if (line[0] != '#') {
             var fields = line.split('\t');
             var record = {
-                geonameId: fields[3],
+                geonameId: parseInt(fields[3]),
                 type: 'Admin2',
                 countryIso: fields[0].split('.')[0],
                 admin1Code: fields[0].split('.')[1],

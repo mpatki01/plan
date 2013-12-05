@@ -28,18 +28,18 @@ mongoClient.open(function(err, mongoClient) {
         if (line[0] != '#') {
             var fields = line.split('\t');
             var record = {
-                geonameId: fields[16],
+                geonameId: parseInt(fields[16]),
                 name: fields[4],
                 loweredName: fields[4].toLowerCase(),
                 codes: {
                     iso: fields[0],
                     iso3: fields[1],
-                    isoNumeric: fields[2],
+                    isoNumeric: parseInt(fields[2]),
                     fips: fields[3],
                 },
                 capital: fields[5],
-                area: fields[6],
-                population: fields[7],
+                area: parseInt(fields[6]),
+                population: parseInt(fields[7]),
                 continent: {
                     code: fields[8],
                     name: continentCodes[fields[8]],

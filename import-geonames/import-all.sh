@@ -16,7 +16,7 @@ echo Importing feature data
 node import-featureCodes.js
 
 echo Importing places
-node import-sample.js
+node import-places.js
 
-#echo Download all files
-#node import-geonames.js
+echo Creating indices
+node create-indices.js

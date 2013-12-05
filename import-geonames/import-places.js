@@ -4,9 +4,9 @@ var fs = require('fs');
 var lineReader = require('line-reader');
 var databaseName = 'triptacular';
 var mongoClient = new MongoClient(new Server('localhost', 27017));
-var filename = '/home/mike/geonames_data/allCountries.txt';
+var filename = '/home/mike/data/GB.txt';
 var inStream = fs.createReadStream(filename, {flags:'r'});
-var threshold = 20000;
+var threshold = 10000;
 var records = [];
 
 mongoClient.open(function(err, mongoClient) {
@@ -49,11 +49,11 @@ mongoClient.open(function(err, mongoClient) {
                 lineReader.eachLine(filename, function(line, isLastLine) {
                     var fields = line.split('\t');
                     var record = {
-                        geonameId : fields[0],
+                        geonameId : parseInt(fields[0]),
                         name : fields[1],
                         asciiName : fields[2],
                         alternateNames : fields[3] ? fields[3].split(',') : [],
-                        loc : [fields[5],fields[4]],
+                        loc : [parseFloat(fields[5]),parseFloat(fields[4])],
                         country : {
                             _id: fields[8] ? countries[fields[8]]._id : "",
                             geonameId: fields[8] ? countries[fields[8]].geonameId : "",
@@ -61,11 +61,11 @@ mongoClient.open(function(err, mongoClient) {
                             iso3: fields[8] ? countries[fields[8]].codes.iso3 : "",
                             name: fields[8] ? countries[fields[8]].name : ""
                         },
-                        population : fields[14],
+                    population : fields[14] ? parseInt(fields[14]) : -1,
                         elevation : fields[15],
                         dem : fields[16],
                         timezone : fields[17],
-                        modificationDate : fields[18]
+                        modificationDate : new Date(fields[18])
                     };
                     if (fields[9]) {
                         record.alternateCountryCodes = fields[9].split(',');
@@ -77,8 +77,7 @@ mongoClient.open(function(err, mongoClient) {
                         record.feature = {
                             class: fields[6],
                             code: fields[7],
-                            name: feature.name,
-                            description: feature.description
+                            name: feature.name
                         }
                     }
 
