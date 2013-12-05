@@ -4,58 +4,135 @@ var fs = require('fs');
 var lineReader = require('line-reader');
 var databaseName = 'triptacular';
 var mongoClient = new MongoClient(new Server('localhost', 27017));
-var filename = '/home/mike/data/US.txt';
+var filename = '/home/mike/geonames_data/sample.txt';
 var inStream = fs.createReadStream(filename, {flags:'r'});
-var records = [];
 var threshold = 30000;
+var records = [];
 
 mongoClient.open(function(err, mongoClient) {
     var db = mongoClient.db('triptacular');
-    var collection = db.collection('geonames');
-    var index = 0;
-    var records = [];
-    var lineCount = 0;
-    lineReader.eachLine(filename, function(line, isLastLine) {
-        var fields = line.split('\t');
-        var record = {
-            geonameId : fields[0],
-            name : fields[1],
-            asciiName : fields[2],
-            alternateNames : fields[3],
-            loc : [fields[5],fields[4]],
-            featureClass : fields[6],
-            featureCode : fields[7],
-            countryCode  : fields[8],
-            cc2	: fields[9],
-            admin1 : fields[10],
-            admin2 : fields[11],
-            admin3 : fields[12],
-            admin4 : fields[13],
-            population : fields[14],
-            elevation : fields[15],
-            dem : fields[16],
-            timezone : fields[17],
-            modificationDate : fields[18]
-        };
-        records.push(record);
-        if (records.length == threshold || isLastLine) {
-            collection.insert(records, {w:1}, function(err, result) {
-                if (err) {
-                    console.log('insert failure');
+    var collection = db.collection('countries');
+    var countries = {};
+    var stream = collection.find().stream();
+    stream.on('data', function(item) {
+        countries[item.codes.iso] = item;
+    });
+    stream.on('end', function() {
+        var administrations = {};
+        collection = db.collection('administrations');
+        var stream2 = collection.find().stream();
+        stream2.on('data', function(item) {
+            var key = "";
+            if (item.type == "Admin1") {
+                key = item.countryIso + '.' + item.adminCode;
+            }
+            if (item.type == "Admin2") {
+                key = item.countryIso + '.' + item.admin1Code + '.' + item.adminCode;
+            }
+            administrations[key] = item;
+        });
+        stream2.on('end', function() {
+
+            collection = db.collection('sample');
+            var index = 0;
+            var records = [];
+            var lineCount = 0;
+            lineReader.eachLine(filename, function(line, isLastLine) {
+                var fields = line.split('\t');
+                var record = {
+                    geonameId : fields[0],
+                    name : fields[1],
+                    asciiName : fields[2],
+                    alternateNames : fields[3] ? fields[3].split(',') : [],
+                    loc : [fields[5],fields[4]],
+                    feature: {
+                        class : fields[6],
+                        code : fields[7],
+                    },
+                    country : {
+                        _id: fields[8] ? countries[fields[8]]._id : "",
+                        geonameId: fields[8] ? countries[fields[8]].geonameId : "",
+                        iso: fields[8] ? countries[fields[8]].codes.iso : "",
+                        iso3: fields[8] ? countries[fields[8]].codes.iso3 : "",
+                        name: fields[8] ? countries[fields[8]].name : ""
+                    },
+                    population : fields[14],
+                    elevation : fields[15],
+                    dem : fields[16],
+                    timezone : fields[17],
+                    modificationDate : fields[18]
+                };
+                if (fields[9]) {
+                    record.alternateCountryCodes = fields[9].split(',');
                 }
-                if (isLastLine) {
-                    index = lineCount;
+
+                var countryCode = fields[8] ? countries[fields[8]].codes.iso : "";
+                var regionalCode = fields[10];
+                var hasRegionalAdmin = false;
+                if (countryCode && fields[10]) {
+                    var administration = administrations[countryCode + '.' + fields[10]];
+                    if (administration) {
+                        hasRegionalAdmin = true;
+                        record.administrations = {}
+                        record.administrations.regional = {
+                            _id: administration._id,
+                            geonameId: administration.geonameId,
+                            code: fields[10],
+                            name: administration.name
+                        }
+                    }
                 }
-                else {
-                    index += threshold;
+
+                var hasMunicipalAdmin = false;
+                if (countryCode && regionalCode && fields[11]) {
+                    var key = countryCode + '.' + 
+                            regionalCode + '.' + 
+                            fields[11];
+                    var administration = administrations[key];
+                    if (administration) {
+                        hasMunicipalAdmin = true;
+                        record.administrations = record.administrations || {};
+                        record.administrations.municipal = {
+                            _id: administration._id,
+                            geonameId: administration.geonameId,
+                            code: fields[11],
+                            name: administration.name
+                        }
+                    }
                 }
-                console.log(index + ' records inserted');
-                if (isLastLine) {
-                    process.exit(1);
+                record.tags = [
+                    record.name.toLowerCase(),
+                    record.country.name ? record.country.name.toLowerCase() : ''
+                ];
+                if (hasRegionalAdmin) {
+                    var name = record.administrations.regional.name.toLowerCase();
+                    record.tags.push(name);
                 }
+                if (hasMunicipalAdmin) {
+                    var name = record.administrations.municipal.name.toLowerCase();
+                    record.tags.push(name);
+                }
+                records.push(record);
+                if (records.length == threshold || isLastLine) {
+                    collection.insert(records, {w:1}, function(err, result) {
+                        if (err) {
+                            console.log('insert failure');
+                        }
+                        if (isLastLine) {
+                            index = lineCount;
+                        }
+                        else {
+                            index += threshold;
+                        }
+                        console.log(index + ' records inserted');
+                        if (isLastLine) {
+                            process.exit(1);
+                        }
+                    });
+                    records = [];
+                }
+                lineCount++;
             });
-            records = [];
-        }
-        lineCount++;
+        });
     });
 });

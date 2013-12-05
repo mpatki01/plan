@@ -60,11 +60,11 @@ mkdirp(_target, function(err) {
     var interval = setInterval(function() {
         if (_complete) {
             _complete = false;
-            download(_files[index]);
             if (index == _files.length - 1) {
                 process.exit(0);
             }
             else {
+                download(_files[index]);
                 index++;
             }
         }
