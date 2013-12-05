@@ -60,7 +60,7 @@ mkdirp(_target, function(err) {
     var interval = setInterval(function() {
         if (_complete) {
             _complete = false;
-            if (index == _files.length - 1) {
+            if (index == _files.length) {
                 process.exit(0);
             }
             else {

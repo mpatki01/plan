@@ -4,7 +4,7 @@ var fs = require('fs');
 var lineReader = require('line-reader');
 var databaseName = 'triptacular';
 var mongoClient = new MongoClient(new Server('localhost', 27017));
-var filename = '/home/mike/geonames_data/allCountries.txt';
+var filename = '/home/mike/geonames_data/sample.txt';
 var inStream = fs.createReadStream(filename, {flags:'r'});
 var threshold = 20000;
 var records = [];
@@ -42,7 +42,7 @@ mongoClient.open(function(err, mongoClient) {
             });
             stream3.on('end', function() {
 
-                collection = db.collection('places');
+                collection = db.collection('sample');
                 var index = 0;
                 var records = [];
                 var lineCount = 0;
