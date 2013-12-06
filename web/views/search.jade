@@ -1,0 +1,19 @@
+extends jumbotron
+block heading-content
+    h1 Find Places
+block main-content
+    hr
+    form(role="form", class="form-inline")
+        div(class="form-group")
+            label(for="query") Find a place
+            <br />
+            input(id="query", type="text", style="width: 300px", class="form-control", placeholder="Search for a place", ng-model="queryText")
+            &nbsp;
+            button(class="btn", ng-click="search()") Submit
+    ul(class="list-unstyled")
+        li(ng-repeat="place in places")
+            span(ng-bind="place.country.name")
+            &nbsp;:&nbsp;
+            span(ng-bind="place.name")
+block scripts
+    script(src="/javascripts/search.js", type="text/javascript")

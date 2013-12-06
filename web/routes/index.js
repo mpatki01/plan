@@ -5,8 +5,6 @@ var Task = mongoose.model( 'Task' );
  * GET home page.
  */
 
-exports.index = function(req, res){
-    Task.find({}, function (err, tasks) {
-        res.render('index', { title: 'Express Todo Example', data: tasks });
-    });
+exports.index = function(req, res) {
+    res.render('search', { title: 'Triptacular Search'});
 };

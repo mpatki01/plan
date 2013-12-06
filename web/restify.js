@@ -43,9 +43,16 @@ var Service = function(model, app, options) {
         res.send({message: message});
     };
 
+    var query = function(req, res) {
+        model.find({'tags': req.body.query}, function(err, results) {
+            res.send({results: results});
+        })
+    }
+
     app.post(url, save);
     app.put(url + slug, save);
     app.delete(url + slug, remove);
+    app.post(url + "/search", query);
 };
 
 

@@ -4,7 +4,7 @@ var fs = require('fs');
 var lineReader = require('line-reader');
 var databaseName = 'triptacular';
 var mongoClient = new MongoClient(new Server('localhost', 27017));
-var filename = '/home/mike/data/GB.txt';
+var filename = './data/allCountries.txt';
 var inStream = fs.createReadStream(filename, {flags:'r'});
 var threshold = 10000;
 var records = [];
@@ -133,6 +133,8 @@ mongoClient.open(function(err, mongoClient) {
                     if (hasRegionalAdmin) {
                         var name = record.administrations.regional.name.toLowerCase();
                         record.tags.push(name);
+                        var code = record.administrations.regional.code.toLowerCase();
+                        record.tags.push(code);
                     }
                     if (hasMunicipalAdmin) {
                         var name = record.administrations.municipal.name.toLowerCase();

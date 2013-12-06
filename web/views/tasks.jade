@@ -2,7 +2,7 @@ extends jumbotron
 block heading-content
     script(type="text/javascript")
         window.initial = !{JSON.stringify(initial)};
-    h1 Task List
+    h1 Find Places
     ul(class="list-unstyled")
         li(ng-repeat="task in tasks")
             span(ng-hide="editing", ng-bind="task.name")
