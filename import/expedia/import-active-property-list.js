@@ -6,14 +6,13 @@ var databaseName = 'triptacular';
 var mongoClient = new MongoClient(new Server('localhost', 27017));
 var filename = './data/ActivePropertyList.txt';
 var inStream = fs.createReadStream(filename, {flags:'r'});
-var threshold = 10000;
+var threshold = 500;
 var records = [];
 
 mongoClient.open(function(err, mongoClient) {
     var db = mongoClient.db('triptacular');
     var collection = db.collection('properties');
     var index = 0;
-    var records = [];
     var lineCount = 0;
     lineReader.eachLine(filename, function(line, isLastLine) {
         if (lineCount > 0) {
@@ -50,27 +49,54 @@ mongoClient.open(function(err, mongoClient) {
                     chainCodeId: fields[18] ? parseInt(fields[18]) : null,
                     regionId: parseInt(fields[19])
                 },
-                
+                images: []
             };
-            records.push(record);
-            if (records.length == threshold || isLastLine) {
-                collection.insert(records, {w:1}, function(err, result) {
-                    if (err) {
-                        console.log('insert failure');
-                    }
-                    if (isLastLine) {
-                        index = lineCount;
-                    }
-                    else {
-                        index += threshold;
-                    }
-                    console.log(index + ' records inserted');
-                    if (isLastLine) {
-                        process.exit(1);
-                    }
-                });
-                records = [];
-            }
+
+            var images = db.collection('images');
+            images.find({'expediaHotelId': parseInt(fields[0])}, function(err, cursor) {
+                if(err) {
+                    console.log(err);
+                }
+                else {
+                    cursor.toArray(function(err, array) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        else {
+                            for (var i = 0; i < array.length; i++) {
+                                record.images.push({
+                                    url : array[i].url,
+                                    width : array[i].width,
+                                    height : array[i].height,
+                                    thumbnailUrl : array[i].thumbnailUrl,
+                                    isDefault : array[i].isDefault
+                                });
+                            }
+                            records.push(record);
+                            if (records.length == threshold || isLastLine) {
+                                collection.insert(records, {w:1}, function(err, result) {
+                                    if (err) {
+                                        console.log('insert failure');
+                                    }
+                                    if (isLastLine) {
+                                        index = lineCount;
+                                    }
+                                    else {
+                                        index += threshold;
+                                    }
+                                    console.log(index + ' records inserted');
+                                    if (isLastLine) {
+                                        process.exit(1);
+                                    }
+                                });
+                                records = [];
+                            }
+                        }
+                    });
+                }
+            });
+
+
         }
         lineCount++;
     });
