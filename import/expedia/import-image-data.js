@@ -9,7 +9,7 @@ var DataImporter = function (callback) {
     self.port = 27017;
     self.database = 'triptacular';
     self.collection = 'images';
-    self.filename = './data/HotelImageList.txt';
+    self.filename = './data/HotelImageList.sample';
     self.threshold = 50000;
     self.processed = 0;
     self.count = 0;
@@ -36,12 +36,9 @@ var DataImporter = function (callback) {
     };
 
     self.report = function () {
-        if (self.isLastLine) {
-            self.processed = self.count;
-        } else {
-            self.processed = self.processed + self.threshold;
-        }
-        console.log(self.processed + ' records processed');
+        if (self.count % self.threshold === 0 || self.isLastLine) {
+            console.log(self.count + ' records processed');
+        } 
     };
 
     self.processLine = function (line, collection) {
@@ -54,14 +51,14 @@ var DataImporter = function (callback) {
                     console.log('insert failure');
                 }
 
-                self.report();
-                if (self.isLastLine && callback) {
-                    callback();
+                if (self.isLastLine && self.callback) {
+                    self.callback();
                 }
             });
             self.records = [];
         }
         self.count = self.count + 1;
+        self.report();
     };
 
     self.ingest = function () {
@@ -84,6 +81,7 @@ var DataImporter = function (callback) {
 
 var ingestor = new DataImporter(function () {
     console.log('done');
+    process.exit(0);
 });
 ingestor.ingest();
 
