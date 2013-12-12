@@ -20,9 +20,9 @@ var DataImporter = function (options) {
     self.isLastLine = false;
 
     self.parse = function (line) {
-        var record = null;
+        var record = null,
+            fields = line.split('|');
         if (line) {
-            var fields = line.split('|');
             record = {
                 expediaHotelId: parseInt(fields[0], 10),
                 caption: fields[1],
@@ -37,9 +37,9 @@ var DataImporter = function (options) {
     };
 
     self.processLine = function (line, collection) {
-        var record = self.parse(line);
+        var record = self.parse(line),
+            recordable = self.records.length === self.threshold || self.isLastLine;
         self.records.push(record);
-        var recordable = self.records.length === self.threshold || self.isLastLine;
         if (recordable) {
             collection.insert(self.records, { w: 1, fsync: true }, function (err, result) {
                 if (err) {
@@ -63,17 +63,19 @@ var DataImporter = function (options) {
             console.log('The import function requires a callback.');
             return;
         }
+
+        var mongoServer = new Server(self.host, self.port),
+            mongoClient = new MongoClient(mongoServer);
         self.callback = callback;
-        var mongoServer = new Server(self.host, self.port);
-        var mongoClient = new MongoClient(mongoServer);
         mongoClient.open(function (err, mongoClient) {
             if (err) {
                 self.callback(err);
             }
 
-            var db = mongoClient.db(self.database);
-            var collection = db.collection(self.collection);
-            var lines = 0;
+            var db = mongoClient.db(self.database),
+                collection = db.collection(self.collection),
+                lines = 0;
+
             lineReader.eachLine(self.filename, function (line, isLastLine) {
                 lines = lines + 1;
                 if (isLastLine) {
