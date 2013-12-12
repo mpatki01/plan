@@ -12,9 +12,9 @@ var DataImporter = function (callback) {
     self.filename = './data/HotelImageList.sample';
     self.threshold = 50000;
     self.processed = 0;
-    self.count = 0;
+    self.inserted = 0;
+    self.linesInFile = 0;
     self.records = [];
-    self.line = null;
     self.isLastLine = false;
     self.callback = callback;
 
@@ -35,30 +35,26 @@ var DataImporter = function (callback) {
         return record;
     };
 
-    self.report = function () {
-        if (self.count % self.threshold === 0 || self.isLastLine) {
-            console.log(self.count + ' records processed');
-        } 
-    };
-
     self.processLine = function (line, collection) {
         var record = self.parse(line);
         self.records.push(record);
         var recordable = self.records.length === self.threshold || self.isLastLine;
         if (recordable) {
-            collection.insert(self.records, { w: 1 }, function (err) {
+            collection.insert(self.records, { w: 1, fsync: true }, function (err, result) {
                 if (err) {
-                    console.log('insert failure');
+                    self.callback(err);
                 }
 
-                if (self.isLastLine && self.callback) {
-                    self.callback();
+                self.inserted = self.inserted + result.length;
+                console.log(self.inserted + ' records inserted.');
+                if (self.processed = self.linesInFile &&
+                    self.inserted === self.linesInFile) {
+                    self.callback(null);
                 }
             });
             self.records = [];
         }
-        self.count = self.count + 1;
-        self.report();
+        self.processed = self.processed + 1;
     };
 
     self.ingest = function () {
@@ -66,20 +62,28 @@ var DataImporter = function (callback) {
         var mongoClient = new MongoClient(mongoServer);
         mongoClient.open(function (err, mongoClient) {
             if (err) {
-                console.log(err);
+                self.callback(err);
             }
 
             var db = mongoClient.db(self.database);
             var collection = db.collection(self.collection);
+            var lines = 0;
             lineReader.eachLine(self.filename, function (line, isLastLine) {
-                self.isLastLine = isLastLine;
+                lines = lines + 1;
+                if (isLastLine) {
+                    self.isLastLine = isLastLine;
+                    self.linesInFile = lines;
+                }
                 self.processLine(line, collection);
             });
         });
     };
 };
 
-var ingestor = new DataImporter(function () {
+var ingestor = new DataImporter(function (err) {
+    if (err) {
+        console.log(err);
+    }
     console.log('done');
     process.exit(0);
 });
