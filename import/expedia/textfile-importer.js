@@ -2,7 +2,23 @@ var MongoClient = require('mongodb').MongoClient,
     Server = require('mongodb').Server,
     lineReader = require('line-reader');
 
-var DataImporter = function (options) {
+/**
+ * Imports data into MongoDb from a text file.
+ * @constructor
+ * @param {Object} options Optional values for the importer.
+ * @param {String} options.host The hostname of the MongoDB server.
+ * @param {Number} options.port The port used by the MongoDB server.
+ * @param {String} options.database The database in which the data will be
+ *                                  stored.
+ * @param {String} options.collection The collection in which the data will be
+ *                                   stored.
+ * @param {String} options.filename The name of the text file to parse.
+ * @param {Number} options.threshold The number of documents to insert as a
+ *                                  batch.
+ * @param {Function} options.parse A function which accepts a line of text and
+ *                                 returns a document to be inserted.
+ */
+var TextFileImporter = function (options) {
     'use strict';
     var self = this;
     options = options || {};
@@ -12,6 +28,7 @@ var DataImporter = function (options) {
     self.collection = options.collection;
     self.filename = options.filename;
     self.threshold = options.threshold || 100;
+    self.parse = options.parse || null;
     self.callback = null;
     self.processed = 0;
     self.inserted = 0;
@@ -19,29 +36,11 @@ var DataImporter = function (options) {
     self.records = [];
     self.isLastLine = false;
 
-    self.parse = function (line) {
-        var record = null,
-            fields = line.split('|');
-        if (line) {
-            record = {
-                expediaHotelId: parseInt(fields[0], 10),
-                caption: fields[1],
-                url: fields[2],
-                width: parseInt(fields[3], 10),
-                height: parseInt(fields[4], 10),
-                thumbnailUrl: fields[6],
-                isDefault: fields[7] === '1' ? true : false
-            };
-        }
-        return record;
-    };
-
     self.processLine = function (line, collection) {
-        var record = self.parse(line),
-            recordable = self.records.length === self.threshold || self.isLastLine;
+        var record = self.parse(line);
         self.records.push(record);
-        if (recordable) {
-            collection.insert(self.records, { w: 1, fsync: true }, function (err, result) {
+        if (self.records.length === self.threshold || self.isLastLine) {
+            collection.insert(self.records, { w: 1}, function (err, result) {
                 if (err) {
                     self.callback(err);
                 }
@@ -88,4 +87,8 @@ var DataImporter = function (options) {
     };
 };
 
-module.exports = DataImporter;
+module.exports.import = function (options, callback) {
+    'use strict';
+    var importer = new TextFileImporter(options);
+    importer.import(callback);
+};

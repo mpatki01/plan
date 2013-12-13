@@ -1,16 +1,29 @@
-var MongoClient = require('mongodb').MongoClient;
-var Server = require('mongodb').Server;
-var lineReader = require('line-reader');
-var Importer = require('./importer.js');
+var importer = require('./textfile-importer.js');
 
-
-var importer = new Importer({
+var options = {
     database: 'triptacular',
     collection: 'images',
     filename: './data/HotelImageList.sample',
-    threshold: 10000
-});
-importer.import(function (err) {
+    threshold: 10000,
+    parse: function (line) {
+        var record = null,
+            fields = line.split('|');
+        if (line) {
+            record = {
+                expediaHotelId: parseInt(fields[0], 10),
+                caption: fields[1],
+                url: fields[2],
+                width: parseInt(fields[3], 10),
+                height: parseInt(fields[4], 10),
+                thumbnailUrl: fields[6],
+                isDefault: fields[7] === '1' ? true : false
+            };
+        }
+        return record;
+    }
+};
+
+importer.import(options, function (err) {
     'use strict';
     if (err) {
         console.log(err);
