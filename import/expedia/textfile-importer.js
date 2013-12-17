@@ -40,27 +40,29 @@ var TextFileImporter = function (options) {
     self.records = [];
     self.isLastLine = false;
 
-    /**
-     * Pushes each line from the text file into an array, records the array
-     * in MongoDB once the array has reached threshold capacity.
-     * @param {String} A line of text extracted from the data text file.
-     */
-    self.processLine = function (line) {
-        var record = self.parse(line, _db, _collection);
+    self.onInserted = function (err, result) {
+        if (err) {
+            self.callback(err);
+        }
+
+        var finished = false;
+        self.inserted = self.inserted + result.length;
+        console.log(self.inserted + ' records inserted.');
+        finished = (self.processed === self.linesInFile && 
+                self.inserted === self.linesInFile);
+        if (finished) {
+            self.callback(null);
+        }
+    };
+
+    self.processRecord = function (err, record) {
+        if (err) {
+            self.callback(err);
+        }
+
         self.records.push(record);
         if (self.records.length === self.threshold || self.isLastLine) {
-            _collection.insert(self.records, { w: 1}, function (err, result) {
-                if (err) {
-                    self.callback(err);
-                }
-
-                self.inserted = self.inserted + result.length;
-                console.log(self.inserted + ' records inserted.');
-                if (self.processed === self.linesInFile &&
-                    self.inserted === self.linesInFile) {
-                    self.callback(null);
-                }
-            });
+            _collection.insert(self.records, {w: 1}, self.onInserted);
             self.records = [];
         }
         self.processed = self.processed + 1;
@@ -94,7 +96,7 @@ var TextFileImporter = function (options) {
                     self.isLastLine = isLastLine;
                     self.linesInFile = lines;
                 }
-                self.processLine(line);
+                self.parse(line, _db, _collection, self.processRecord);
             });
         });
     };

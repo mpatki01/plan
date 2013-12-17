@@ -5,7 +5,7 @@ var options = {
     collection: 'images',
     filename: './data/HotelImageList.txt',
     threshold: 10000,
-    parse: function (line) {
+    parse: function (line, db, collection, callback) {
         var record = null,
             fields = line.split('|');
         if (line) {
@@ -19,14 +19,14 @@ var options = {
                 isDefault: fields[7] === '1' ? true : false
             };
         }
-        return record;
+        callback(null, record);
     }
 };
 
 importer.import(options, function (err) {
     'use strict';
     if (err) {
-        console.log(err);
+        'error: ' + console.log(err);
     }
     console.log('done');
     process.exit(0);

@@ -20,26 +20,27 @@ var toImages = function (array) {
     return images;
 };
 
-var getImages = function (id, db) {
+var getImages = function (id, db, callback) {
     var images = [],
         collection = db.collection('images');
     collection.find({'expediaHotelId': id}, function(err, cursor) {
         if(err) {
-            console.log(err);
+            callback(err);
             return;
         }
 
         cursor.toArray(function(err, array) {
             if (err) {
-                console.log(err);
+                callback(err);
                 return;
             }
             images = toImages(array);
+            callback(null, images);
         });
     });
 };
 
-var parse = function (line, db) {
+var parse = function (line, db, collection, callback) {
     'use strict';
     var record = null,
         fields = line.split('|'),
@@ -76,10 +77,18 @@ var parse = function (line, db) {
             supplierType: fields[16],
             chainCodeId: fields[18] ? parseInt(fields[18]) : null,
             regionId: parseInt(fields[19])
-        },
-        images: getImages(affiliateId, db)
+        }
     };
-    return record;
+
+    getImages(affiliateId, db, function (err, images) {
+        if (err) {
+            callback(err);
+            return;
+        }
+
+        record.images = images;
+        callback(null, record);
+    });
 };
 
 var options = {
