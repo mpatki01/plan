@@ -1,3 +1,5 @@
+/*jslint nomen: true */
+
 var MongoClient = require('mongodb').MongoClient,
     Server = require('mongodb').Server,
     lineReader = require('line-reader');
@@ -20,7 +22,9 @@ var MongoClient = require('mongodb').MongoClient,
  */
 var TextFileImporter = function (options) {
     'use strict';
-    var self = this;
+    var self = this,
+        _db,
+        _collection;
     options = options || {};
     self.host = options.host || 'localhost';
     self.port = options.port || 27017;
@@ -36,11 +40,16 @@ var TextFileImporter = function (options) {
     self.records = [];
     self.isLastLine = false;
 
-    self.processLine = function (line, collection) {
-        var record = self.parse(line);
+    /**
+     * Pushes each line from the text file into an array, records the array
+     * in MongoDB once the array has reached threshold capacity.
+     * @param {String} A line of text extracted from the data text file.
+     */
+    self.processLine = function (line) {
+        var record = self.parse(line, _db, _collection);
         self.records.push(record);
         if (self.records.length === self.threshold || self.isLastLine) {
-            collection.insert(self.records, { w: 1}, function (err, result) {
+            _collection.insert(self.records, { w: 1}, function (err, result) {
                 if (err) {
                     self.callback(err);
                 }
@@ -57,6 +66,10 @@ var TextFileImporter = function (options) {
         self.processed = self.processed + 1;
     };
 
+    /**
+     * Imports the file specified in the constructor options into the database
+     * and collection specified in the constructor options.
+     */
     self.import = function (callback) {
         if (!callback) {
             console.log('The import function requires a callback.');
@@ -71,9 +84,9 @@ var TextFileImporter = function (options) {
                 self.callback(err);
             }
 
-            var db = mongoClient.db(self.database),
-                collection = db.collection(self.collection),
-                lines = 0;
+            var lines = 0;
+            _db = mongoClient.db(self.database);
+            _collection = _db.collection(self.collection);
 
             lineReader.eachLine(self.filename, function (line, isLastLine) {
                 lines = lines + 1;
@@ -81,7 +94,7 @@ var TextFileImporter = function (options) {
                     self.isLastLine = isLastLine;
                     self.linesInFile = lines;
                 }
-                self.processLine(line, collection);
+                self.processLine(line);
             });
         });
     };
