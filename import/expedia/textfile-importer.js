@@ -23,6 +23,7 @@ var MongoClient = require('mongodb').MongoClient,
 var TextFileImporter = function (options) {
     'use strict';
     var self = this,
+        _mongoClient,
         _db,
         _collection;
     options = options || {};
@@ -34,6 +35,7 @@ var TextFileImporter = function (options) {
     self.threshold = options.threshold || 100;
     self.parse = options.parse || null;
     self.callback = null;
+    self.lines = 0;
     self.processed = 0;
     self.inserted = 0;
     self.linesInFile = 0;
@@ -60,12 +62,34 @@ var TextFileImporter = function (options) {
             self.callback(err);
         }
 
+        var lastBatch = false;
         self.records.push(record);
-        if (self.records.length === self.threshold || self.isLastLine) {
+        lastBatch = self.isLastLine && (self.records.length === self.linesInFile);
+        if (self.records.length === self.threshold || lastBatch) {
             _collection.insert(self.records, {w: 1}, self.onInserted);
             self.records = [];
         }
         self.processed = self.processed + 1;
+    };
+
+    self.processLine = function (line, isLastLine) {
+        self.lines = self.lines + 1;
+        if (isLastLine) {
+            self.isLastLine = isLastLine;
+            self.linesInFile = self.lines;
+        }
+        self.parse(line, _db, _collection, self.processRecord);
+    };
+
+    self.mongoClientOpened = function (err, client) {
+        if (err) {
+            self.callback(err);
+        }
+
+        _mongoClient = client;
+        _db = client.db(self.database);
+        _collection = _db.collection(self.collection);
+        lineReader.eachLine(self.filename, self.processLine);
     };
 
     /**
@@ -81,24 +105,7 @@ var TextFileImporter = function (options) {
         var mongoServer = new Server(self.host, self.port),
             mongoClient = new MongoClient(mongoServer);
         self.callback = callback;
-        mongoClient.open(function (err, mongoClient) {
-            if (err) {
-                self.callback(err);
-            }
-
-            var lines = 0;
-            _db = mongoClient.db(self.database);
-            _collection = _db.collection(self.collection);
-
-            lineReader.eachLine(self.filename, function (line, isLastLine) {
-                lines = lines + 1;
-                if (isLastLine) {
-                    self.isLastLine = isLastLine;
-                    self.linesInFile = lines;
-                }
-                self.parse(line, _db, _collection, self.processRecord);
-            });
-        });
+        mongoClient.open(self.mongoClientOpened);
     };
 };
 
