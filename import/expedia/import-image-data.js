@@ -3,7 +3,7 @@ var importer = require('./textfile-importer.js');
 var options = {
     database: 'triptacular',
     collection: 'images',
-    filename: './data/HotelImageList.sample',
+    filename: './data/HotelImageList.txt',
     threshold: 10000,
     parse: function (line, count, client, callback) {
         var record = null,

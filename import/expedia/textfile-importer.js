@@ -36,28 +36,21 @@ var TextFileImporter = function (options) {
     self.parse = options.parse || null;
     self.callback = null;
     self.lines = 0;
-    self.processed = 0;
+    self.records = [];
     self.inserted = 0;
     self.linesInFile = 0;
-    self.records = [];
     self.recordsCount = 0;
     self.isLastLine = false;
-    self.isLastBatch = false;
-    self.insertableBatches = 0;
-    self.insertedBatches = 0;
+    self.isLastRecord = false;
 
     self.onInserted = function (err, result) {
         if (err) {
             self.callback(err);
         }
 
-        var finished = false;
-        self.inserted = self.inserted + result.length;
-        self.insertedBatches += 1;
+        self.inserted += result.length;
         console.log(self.inserted + ' records inserted.');
-        finished = (self.processed === self.linesInFile && 
-                self.inserted === self.linesInFile);
-        if (finished) {
+        if (self.inserted === self.linesInFile) {
             self.callback(null);
         }
 
@@ -70,23 +63,18 @@ var TextFileImporter = function (options) {
 
         self.records.push(record);
         self.recordsCount += 1;
-        if (self.records.length === self.threshold || self.recordsCount === self.linesInFile) {
+        self.isLastRecord = self.recordsCount === self.linesInFile;
+        if (self.records.length === self.threshold || self.isLastRecord) {
             _collection.insert(self.records, {w: 1}, self.onInserted);
             self.records = [];
         }
-        self.processed += 1;
     };
 
     self.processLine = function (line, isLastLine) {
         self.lines = self.lines + 1;
-        if (self.lines % self.threshold == 0) {
-            self.insertableBatch += 1;
-        }
         if (isLastLine) {
             self.isLastLine = isLastLine;
             self.linesInFile = self.lines;
-            self.threshold = self.linesInFile % self.threshold;
-            self.insertableBatch += 1;
         }
         self.parse(line, self.lines, _mongoClient, self.processRecord);
     };
