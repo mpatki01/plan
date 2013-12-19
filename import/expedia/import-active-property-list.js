@@ -40,7 +40,7 @@ var getImages = function (id, db, callback) {
     });
 };
 
-var parse = function (line, db, collection, callback) {
+var parse = function (line, count, client, callback) {
     'use strict';
     var record = null,
         fields = line.split('|'),
@@ -80,6 +80,7 @@ var parse = function (line, db, collection, callback) {
         }
     };
 
+    var db = client.db("triptacular");
     getImages(affiliateId, db, function (err, images) {
         if (err) {
             callback(err);
@@ -94,8 +95,8 @@ var parse = function (line, db, collection, callback) {
 var options = {
     database: 'triptacular',
     collection: 'properties',
-    filename: './data/ActivePropertyList.sample',
-    threshold: 500,
+    filename: './data/ActivePropertyList.txt',
+    threshold: 1000,
     parse: parse
 };
 
