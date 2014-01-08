@@ -1,4 +1,4 @@
-var importer = require('./textfile-importer.js');
+var importer = require('../textfile-importer');
 
 var options = {
     database: 'triptacular',
