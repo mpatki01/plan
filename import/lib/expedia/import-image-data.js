@@ -20,6 +20,9 @@ var options = {
             };
         }
         callback(null, record);
+    },
+    inserted: function (total) {
+        // ignore insertions
     }
 };
 

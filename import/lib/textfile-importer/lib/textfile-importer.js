@@ -2,7 +2,8 @@
 
 var MongoClient = require('mongodb').MongoClient,
     Server = require('mongodb').Server,
-    lineReader = require('line-reader');
+    lineReader = require('line-reader'),
+    config = require('../../config');
 
 /**
  * Imports data into MongoDb from a text file.
@@ -27,8 +28,8 @@ var TextFileImporter = function (options) {
         _db,
         _collection;
     options = options || {};
-    self.host = options.host || 'localhost';
-    self.port = options.port || 27017;
+    self.host = options.host || config.host;
+    self.port = options.port || config.port;
     self.database = options.database;
     self.collection = options.collection;
     self.filename = options.filename;
@@ -42,6 +43,9 @@ var TextFileImporter = function (options) {
     self.recordsCount = 0;
     self.isLastLine = false;
     self.isLastRecord = false;
+    self.insertHandler = options.inserted || function (total) {
+        console.log(total + ' records inserted.');
+    };
 
     self.onInserted = function (err, result) {
         if (err) {
@@ -49,7 +53,7 @@ var TextFileImporter = function (options) {
         }
 
         self.inserted += result.length;
-        console.log(self.inserted + ' records inserted.');
+        self.insertHandler(self.inserted);
         if (self.inserted === self.linesInFile) {
             self.callback(null);
         }

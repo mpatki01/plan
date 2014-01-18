@@ -97,7 +97,10 @@ var options = {
     collection: 'properties',
     filename: './data/ActivePropertyList.txt',
     threshold: 1000,
-    parse: parse
+    parse: parse,
+    inserted: function (total) {
+        // ignore insertions
+    }
 };
 
 importer.import(options, function (err) {
