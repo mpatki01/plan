@@ -3,7 +3,8 @@
 var MongoClient = require('mongodb').MongoClient,
     Server = require('mongodb').Server,
     lineReader = require('line-reader'),
-    config = require('../../config');
+    config = require('../../config'),
+    seeder = require('../../seeder');
 
 /**
  * Imports data into MongoDb from a text file.
@@ -21,98 +22,102 @@ var MongoClient = require('mongodb').MongoClient,
  * @param {Function} options.parse A function which accepts a line of text and
  *                                 returns a document to be inserted.
  */
-var TextFileImporter = function (options) {
+var textFileImporter = function (options) {
     'use strict';
-    var self = this,
+    var _that = seeder.create(),
+        _options = options || {},
         _mongoClient,
-        _db,
-        _collection;
-    options = options || {};
-    self.host = options.host || config.host;
-    self.port = options.port || config.port;
-    self.database = options.database || config.database;
-    self.collection = options.collection;
-    self.filename = options.filename;
-    self.threshold = options.threshold || 100;
-    self.parse = options.parse || null;
-    self.callback = null;
-    self.lines = 0;
-    self.records = [];
-    self.inserted = 0;
-    self.linesInFile = 0;
-    self.recordsCount = 0;
-    self.isLastLine = false;
-    self.isLastRecord = false;
-    self.insertHandler = options.inserted || function (total) {
+        _mongoDb = null,
+        _mongoCollection = null,
+        _lines = 0,
+        _records = [],
+        _inserted = 0,
+        _linesInFile = 0,
+        _recordsCount = 0,
+        _isLastRecord = false;
+
+    _that.host = _options.host || config.host;
+    _that.port = _options.port || config.port;
+    _that.database = _options.database || config.database;
+    _that.collection = _options.collection;
+    _that.filename = _options.filename;
+    _that.threshold = _options.threshold || 100;
+    _that.parse = _options.parse;
+
+    _that.insertHandler = _options.inserted || function (total) {
         console.log(total + ' records inserted.');
     };
 
-    self.onInserted = function (err, result) {
+    _that.completedHandler = _options.completed || function (err) {
         if (err) {
-            self.callback(err);
+            console.log(err);
+            return;
         }
-
-        self.inserted += result.length;
-        self.insertHandler(self.inserted);
-        if (self.inserted === self.linesInFile) {
-            self.callback(null);
-        }
-
+        console.log('done');
     };
 
-    self.processRecord = function (err, record) {
+    function onInserted(err, result) {
         if (err) {
-            self.callback(err);
+            _that.completedHandler(err);
         }
 
-        self.records.push(record);
-        self.recordsCount += 1;
-        self.isLastRecord = self.recordsCount === self.linesInFile;
-        if (self.records.length === self.threshold || self.isLastRecord) {
-            _collection.insert(self.records, {w: 1}, self.onInserted);
-            self.records = [];
+        _inserted += result.length;
+        _that.insertHandler(_inserted);
+        if (_inserted === _linesInFile) {
+            _that.completedHandler(null);
         }
-    };
+    }
 
-    self.processLine = function (line, isLastLine) {
-        self.lines = self.lines + 1;
+    function processRecord(err, record) {
+        if (err) {
+            _that.completedHandler(err);
+        }
+
+        _records.push(record);
+        _recordsCount += 1;
+        _isLastRecord = _recordsCount === _linesInFile;
+        if (_records.length === _that.threshold || _isLastRecord) {
+            _mongoCollection.insert(_records, {w: 1}, onInserted);
+            _records = [];
+        }
+    }
+
+    function processLine(line, isLastLine) {
+        _lines = _lines + 1;
         if (isLastLine) {
-            self.isLastLine = isLastLine;
-            self.linesInFile = self.lines;
+            _linesInFile = _lines;
         }
-        self.parse(line, self.lines, _mongoClient, self.processRecord);
-    };
+        var parseOptions = {
+            line: line,
+            lines: _lines,
+            client: _mongoClient
+        };
+        _that.parse(parseOptions, processRecord);
+    }
 
-    self.mongoClientOpened = function (err, client) {
+    function mongoClientOpened(err, client) {
         if (err) {
-            self.callback(err);
+            _that.completedHandler(err);
         }
 
         _mongoClient = client;
-        _db = client.db(self.database);
-        _collection = _db.collection(self.collection);
-        lineReader.eachLine(self.filename, self.processLine);
-    };
+        _mongoDb = client.db(_that.database);
+        _mongoCollection = _mongoDb.collection(_that.collection);
+        lineReader.eachLine(_that.filename, processLine);
+    }
 
     /**
      * Imports the file specified in the constructor options into the database
      * and collection specified in the constructor options.
      */
-    self.import = function (callback) {
-        if (!callback) {
-            console.log('The import function requires a callback.');
-            return;
-        }
-
-        var mongoServer = new Server(self.host, self.port),
+    _that.import = function (callback) {
+        var mongoServer = new Server(_that.host, _that.port),
             mongoClient = new MongoClient(mongoServer);
-        self.callback = callback;
-        mongoClient.open(self.mongoClientOpened);
+        _that.completedHandler = callback;
+        mongoClient.open(mongoClientOpened);
     };
+
+    return _that;
 };
 
-module.exports.import = function (options, callback) {
-    'use strict';
-    var importer = new TextFileImporter(options);
-    importer.import(callback);
-};
+module.exports.create = textFileImporter;

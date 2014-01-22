@@ -1,0 +1,6 @@
+{
+    "name": "mongodb-importer",
+    "version": "0.0.1",
+    "private": true,
+    "main": "./lib/mongodb-importer.js"
+}
