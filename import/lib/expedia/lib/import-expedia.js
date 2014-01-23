@@ -26,5 +26,11 @@
         inserted: function (total) {
             inserted('Image', total);
         }
-    }, function () { imported('images'); });
+    }, function (err) { 
+    	if (err) {
+    		console.log(err);
+    		return;
+    	}
+    	imported('images'); 
+	});
 }());

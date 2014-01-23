@@ -1,10 +1,7 @@
 /*jslint nomen: true */
 
-var MongoClient = require('mongodb').MongoClient,
-    Server = require('mongodb').Server,
-    lineReader = require('line-reader'),
-    config = require('../../config'),
-    seeder = require('../../seeder');
+var lineReader = require('line-reader'),
+    inserter = require('../../inserter');
 
 /**
  * Imports data into MongoDb from a text file.
@@ -24,62 +21,25 @@ var MongoClient = require('mongodb').MongoClient,
  */
 var textFileImporter = function (options) {
     'use strict';
-    var _that = seeder.create(),
-        _options = options || {},
-        _mongoClient,
-        _mongoDb = null,
-        _mongoCollection = null,
+
+    var _that = inserter.create(options),
+        _mongoClient = null,
         _lines = 0,
-        _records = [],
-        _inserted = 0,
         _linesInFile = 0,
-        _recordsCount = 0,
-        _isLastRecord = false;
+        _recordsCount = 0;
 
-    _that.host = _options.host || config.host;
-    _that.port = _options.port || config.port;
-    _that.database = _options.database || config.database;
-    _that.collection = _options.collection;
-    _that.filename = _options.filename;
-    _that.threshold = _options.threshold || 100;
-    _that.parse = _options.parse;
-
-    _that.insertHandler = _options.inserted || function (total) {
-        console.log(total + ' records inserted.');
-    };
-
-    _that.completedHandler = _options.completed || function (err) {
-        if (err) {
-            console.log(err);
-            return;
-        }
-        console.log('done');
-    };
-
-    function onInserted(err, result) {
-        if (err) {
-            _that.completedHandler(err);
-        }
-
-        _inserted += result.length;
-        _that.insertHandler(_inserted);
-        if (_inserted === _linesInFile) {
-            _that.completedHandler(null);
-        }
-    }
+    _that.filename = options.filename;
+    _that.parse = options.parse;
 
     function processRecord(err, record) {
         if (err) {
-            _that.completedHandler(err);
+            _that.completed(err);
+            return;
         }
 
-        _records.push(record);
         _recordsCount += 1;
-        _isLastRecord = _recordsCount === _linesInFile;
-        if (_records.length === _that.threshold || _isLastRecord) {
-            _mongoCollection.insert(_records, {w: 1}, onInserted);
-            _records = [];
-        }
+        var isLastRecord = _recordsCount === _linesInFile;
+        _that.insert(record, isLastRecord);
     }
 
     function processLine(line, isLastLine) {
@@ -95,26 +55,13 @@ var textFileImporter = function (options) {
         _that.parse(parseOptions, processRecord);
     }
 
-    function mongoClientOpened(err, client) {
-        if (err) {
-            _that.completedHandler(err);
-        }
-
+    function mongoClientOpened(client) {
         _mongoClient = client;
-        _mongoDb = client.db(_that.database);
-        _mongoCollection = _mongoDb.collection(_that.collection);
         lineReader.eachLine(_that.filename, processLine);
     }
 
-    /**
-     * Imports the file specified in the constructor options into the database
-     * and collection specified in the constructor options.
-     */
-    _that.import = function (callback) {
-        var mongoServer = new Server(_that.host, _that.port),
-            mongoClient = new MongoClient(mongoServer);
-        _that.completedHandler = callback;
-        mongoClient.open(mongoClientOpened);
+    _that.import = function () {
+        _that.open(mongoClientOpened);
     };
 
     return _that;

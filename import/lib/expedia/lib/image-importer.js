@@ -21,13 +21,10 @@
         callback(null, record);
     }
 
-    function imageImporter(options) {
-        options.parse = parse;
-        return importer.create(options);
-    }
-
     module.exports.import = function (options, callback) {
-        var imgImporter = imageImporter(options);
+        options.parse = parse;
+        options.completed = callback;
+        var imgImporter = importer.create(options);
         imgImporter.import(callback);
     };
 
