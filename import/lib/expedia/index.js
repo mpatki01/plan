@@ -22,7 +22,7 @@
 
     var imageOptions = {
         collection: 'images',
-        filename: './data/HotelImageList.sample',
+        filename: './data/HotelImageList.txt',
         threshold: 10000,
         inserted: function (total) {
             inserted('Image', total);
