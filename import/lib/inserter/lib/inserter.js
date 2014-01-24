@@ -46,19 +46,6 @@ function inserter(options) {
         _mongoClientOpened(_mongoClient);
     }
 
-    function inserted(err, result, isLast) {
-        if (err) {
-            _that.completed(err);
-            return;
-        }
-
-        _inserted += result.length;
-        _that.inserted(_inserted);
-        if (isLast) {
-            _that.completed(null);
-        }
-    }
-
     _that.insert = function (record, isLast) {
         _records.push(record);
         if (_records.length === _that.threshold || isLast) {
