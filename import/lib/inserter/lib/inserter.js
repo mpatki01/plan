@@ -14,8 +14,7 @@ function inserter(options) {
         _mongoCollection = null,
         _mongoClientOpened,
         _records = [],
-        _inserted = 0,
-        _isLastRecord = false;
+        _inserted = 0;
 
     _that.host = _options.host || config.host;
     _that.port = _options.port || config.port;
@@ -47,7 +46,7 @@ function inserter(options) {
         _mongoClientOpened(_mongoClient);
     }
 
-    function inserted(err, result) {
+    function inserted(err, result, isLast) {
         if (err) {
             _that.completed(err);
             return;
@@ -55,16 +54,26 @@ function inserter(options) {
 
         _inserted += result.length;
         _that.inserted(_inserted);
-        if (_isLastRecord) {
+        if (isLast) {
             _that.completed(null);
         }
     }
 
     _that.insert = function (record, isLast) {
         _records.push(record);
-        _isLastRecord = isLast;
         if (_records.length === _that.threshold || isLast) {
-            _mongoCollection.insert(_records, {w: 1}, inserted);
+            _mongoCollection.insert(_records, {w: 1}, function (err, result) {
+                if (err) {
+                    _that.completed(err);
+                    return;
+                }
+
+                _inserted += result.length;
+                _that.inserted(_inserted);
+                if (isLast) {
+                    _that.completed(null);
+                }
+            });
             _records = [];
         }
     };
