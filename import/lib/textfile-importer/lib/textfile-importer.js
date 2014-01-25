@@ -60,7 +60,7 @@ var textFileImporter = function (options) {
         lineReader.eachLine(_that.filename, processLine);
     }
 
-    _that.import = function () {
+    _that.start = function () {
         _that.open(mongoClientOpened);
     };
 

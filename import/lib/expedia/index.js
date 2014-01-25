@@ -1,10 +1,10 @@
-(function () {
-    'use strict';
+/*jslint nomen: true */
 
-    var charm = require('charm')(),
-        imageImporter = require('./lib/image-importer.js');
-    charm.pipe(process.stdout);
-    charm.cursor(false);
+var charm = require('charm')(),
+    imageImporter = require('./lib/image-importer.js');
+
+var expediaImporter = function () {
+    'use strict';
 
     function inserted(type, total) {
         var msg = type + ' records inserted: ' + total;
@@ -20,20 +20,31 @@
         console.log('Done importing ' + type);
     }
 
-    var imageOptions = {
-        collection: 'images',
-        filename: './data/HotelImageList.txt',
-        threshold: 10000,
-        inserted: function (total) {
-            inserted('Image', total);
-        }
+    var _that = {},
+        _imgImporter = imageImporter.create({
+            collection: 'images',
+            filename: './data/HotelImageList.txt',
+            threshold: 10000,
+            inserted: function (total) {
+                inserted('Image', total);
+            },
+            completed: function (err) {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                imported('images');
+                process.exit(0);
+            }
+        });
+
+    _that.main = function () {
+        charm.pipe(process.stdout);
+        charm.cursor(false);
+        _imgImporter.import();
     };
-    imageImporter.import(imageOptions, function (err) { 
-        if (err) {
-    		console.log(err);
-    		return;
-    	}
-    	imported('images'); 
-        process.exit(0);
-	});
-}());
+
+    return _that;
+};
+
+expediaImporter().main();

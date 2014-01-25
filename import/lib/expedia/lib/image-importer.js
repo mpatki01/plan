@@ -1,9 +1,16 @@
-(function () {
+/*jslint nomen: true */
+
+var importer = require('../../textfile-importer');
+
+var imageImporter = function (options) {
     'use strict';
 
-    var importer = require('../../textfile-importer');
-
-    function parse(options, callback) {
+    /**
+     * Parses a row of text into a MongoDB Expedia image record.
+     * @param {Object} options A set of options used for parsing.
+     * @param {Function} callback Executed when each row is parsed.
+     */
+    options.parse = function (options, callback) {
         var record = null,
             fields = [];
         if (options.line) {
@@ -19,14 +26,16 @@
             };
         }
         callback(null, record);
-    }
-
-    module.exports.import = function (options, callback) {
-        options.parse = parse;
-        options.completed = callback;
-        var imgImporter = importer.create(options);
-        imgImporter.import(callback);
     };
 
-}());
+    var _that = importer.create(options);
 
+    _that.import = function () {
+        _that.start();
+    };
+
+    return _that;
+};
+
+
+module.exports.create = imageImporter;
