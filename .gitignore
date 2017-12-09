@@ -88,3 +88,6 @@ Session.vim
 tags
 
 # End of https://www.gitignore.io/api/vim,code,intellij
+
+# Node
+node_modules/
