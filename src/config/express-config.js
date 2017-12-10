@@ -5,7 +5,7 @@
 'use strict';
 
 var express = require('express'),
-    globals = require('./globalConfig'),
+    globals = require('./global-config'),
     path = require('path'),
     logger = require('morgan'),
     bodyParser = require('body-parser'),

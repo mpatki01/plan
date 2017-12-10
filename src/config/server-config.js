@@ -4,7 +4,7 @@
 
 'use strict';
 
-var globalConfig = require('./globalConfig'),
+var globalConfig = require('./global-config'),
     debug = require('debug')('src:server'),
     svr = null;
 

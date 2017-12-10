@@ -6,8 +6,8 @@
 
 var express = require('express'),
     app = express(),
-    expressConfig = require('./config/expressConfig'),
-    serverConfig = require('./config/serverConfig'),
+    expressConfig = require('./config/express-config'),
+    serverConfig = require('./config/server-config'),
     http = require('http'),
     server = null;
 
