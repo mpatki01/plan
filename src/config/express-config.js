@@ -10,8 +10,6 @@ var express = require('express'),
     logger = require('morgan'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
-    index = require('../routes/index'),
-    users = require('../routes/users'),
     favicon = require('serve-favicon');
 
 /**
@@ -24,16 +22,15 @@ function configure(app, directory) {
     app.set('views', path.join(directory, 'views'));
     app.set('view engine', 'pug');
 
-    // uncomment after placing your favicon in /public
-    app.use(favicon(path.join(directory, 'public', 'favicon.ico')));
+    app.use(favicon(path.join(directory, 'dist', 'favicon.ico')));
     app.use(logger('dev'));
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: false}));
     app.use(cookieParser());
-    app.use(express.static(path.join(directory, 'public')));
+    app.use(express.static(path.join(directory, 'dist')));
 
-    app.use('/', index);
-    app.use('/users', users);
+    //app.use('/', index);
+    //app.use('/users', users);
 
     // Create and start the HTTP service on the port found in the environment
     // (port 3000 is default).
