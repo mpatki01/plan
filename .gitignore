@@ -94,3 +94,4 @@ bower_components/
 dist/
 node_modules/
 .tmp/
+*.code-workspace
