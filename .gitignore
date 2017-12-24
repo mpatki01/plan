@@ -90,8 +90,10 @@ tags
 # End of https://www.gitignore.io/api/vim,code,intellij
 
 # Node
+.tmp/
 bower_components/
 dist/
 node_modules/
-.tmp/
+public/
 *.code-workspace
+

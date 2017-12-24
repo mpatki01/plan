@@ -170,3 +170,9 @@ gulp.task('default', function () {
         runSequence(['clean', 'wiredep'], 'build', resolve);
     });
 });
+
+gulp.task('publish', ['build'], function () {
+    del(['public']).then(function () {
+        return gulp.src('dist/**/*').pipe(gulp.dest('public'));
+    });
+});
