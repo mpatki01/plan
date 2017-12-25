@@ -10,7 +10,10 @@ var express = require('express'),
     logger = require('morgan'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
-    favicon = require('serve-favicon');
+    favicon = require('serve-favicon'),
+    db = require('./sequelize-config'),
+    index = require('../routes/index'),
+    details = require('../routes/details');
 
 /**
  * Configures the express instance.
@@ -29,8 +32,9 @@ function configure(app, directory) {
     app.use(cookieParser());
     app.use(express.static(path.join(directory, 'public')));
 
-    //app.use('/', index);
-    //app.use('/users', users);
+    // Establish all routes.
+    app.use('/', index);
+    details.init(app, db);
 
     // Create and start the HTTP service on the port found in the environment
     // (port 3000 is default).
