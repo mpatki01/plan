@@ -7,7 +7,7 @@
 function init(app, db) {
 
     // Gets a detail by ID.
-    app.get('/details/detail/:id', function (req, res) {
+    app.get('/detail/:id', function (req, res) {
         var id = req.params.id;
         db.details.find({
             where: {id: id}
