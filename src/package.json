@@ -19,7 +19,9 @@
     "pug": "2.0.0-beta11",
     "sequelize": "^4.28.6",
     "serve-favicon": "~2.4.5",
-    "sqlite3": "^3.1.13"
+    "sqlite3": "^3.1.13",
+    "swagger-ui-express": "^2.0.13",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

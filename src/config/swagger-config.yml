@@ -1,0 +1,25 @@
+openapi: 3.0.0
+info:
+  title: The PLaylist mANipulator (PLAN) API
+  version: 0.1.0
+servers:
+  - url: http://localhost:3000
+    description: Main server
+paths:
+  /detail/{id}:
+    get:
+      summary: Gets a detail by ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: A positive integer which uniquely identifies the detail to fetch.
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Details
