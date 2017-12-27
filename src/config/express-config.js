@@ -13,7 +13,10 @@ var express = require('express'),
     favicon = require('serve-favicon'),
     db = require('./sequelize-config'),
     index = require('../routes/index'),
-    details = require('../routes/details');
+    details = require('../routes/details'),
+    yaml = require('yamljs'),
+    swaggerUi = require('swagger-ui-express'),
+    swaggerDocument = null;
 
 /**
  * Configures the express instance.
@@ -35,6 +38,10 @@ function configure(app, directory) {
     // Establish all routes.
     app.use('/', index);
     details.init(app, db);
+
+    // Configure Swagger
+    swaggerDocument = yaml.load(path.join(directory, 'config', './swagger-config.yml'));
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     // Create and start the HTTP service on the port found in the environment
     // (port 3000 is default).
