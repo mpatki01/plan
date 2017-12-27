@@ -7,7 +7,7 @@
 var Sequelize = require('sequelize'),
     sequelize = new Sequelize('main', null, null, {
         dialect: 'sqlite',
-        storage: 'C:\\Users\\mike\\Projects\\plan\\src\\files.db'
+        storage: 'C:\\Users\\mike\\Projects\\plan\\src\\server\\files.db'
     }),
     details = require('../models/details'),
     db = {};

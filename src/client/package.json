@@ -1,27 +1,11 @@
 {
-  "name": "src",
-  "version": "0.0.0",
+  "name": "playlist-manipulator-client",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "node ./app.js",
     "build": "gulp build",
     "publish": "gulp publish",
-    "serve-public": "run-s \"publish\" \"start\"",
-    "serve-dev": "gulp serve",
-    "dev": "run-p \"serve-public\" \"serve-dev\""
-  },
-  "dependencies": {
-    "body-parser": "~1.18.2",
-    "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
-    "express": "~4.15.5",
-    "morgan": "~1.9.0",
-    "pug": "2.0.0-beta11",
-    "sequelize": "^4.28.6",
-    "serve-favicon": "~2.4.5",
-    "sqlite3": "^3.1.13",
-    "swagger-ui-express": "^2.0.13",
-    "yamljs": "^0.3.0"
+    "serve": "gulp serve"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

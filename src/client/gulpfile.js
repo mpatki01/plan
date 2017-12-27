@@ -173,6 +173,6 @@ gulp.task('default', function () {
 
 gulp.task('publish', ['build'], function () {
     del(['public']).then(function () {
-        return gulp.src('dist/**/*').pipe(gulp.dest('public'));
+        return gulp.src('dist/**/*').pipe(gulp.dest('../server/public'));
     });
 });
