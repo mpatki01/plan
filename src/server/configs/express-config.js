@@ -40,7 +40,7 @@ function configure(app, directory) {
     details.init(app, db);
 
     // Configure Swagger
-    swaggerDocument = yaml.load(path.join(directory, 'config', './swagger-config.yml'));
+    swaggerDocument = yaml.load(path.join(directory, 'configs', './swagger-config.yml'));
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
     // Create and start the HTTP service on the port found in the environment
