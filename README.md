@@ -34,4 +34,4 @@ environments.
 
 - npm config set strict-ssl false
 - Set NODE_TLS_REJECT_UNAUTHORIZED = "0"
-  - In powershell this is done via $env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+  - In powershell this is done via $env:NODE_TLS_REJECT_UNAUTHORIZED = "0"
